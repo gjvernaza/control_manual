@@ -1,9 +1,7 @@
 
-#include <WiFi.h>
 
+#include "BluetoothSerial.h"
 
-const char *ssid = "ServerESP32";
-const char *password = "1234567890";
 //////// valores de los pines del motor 1 //////////
 const int phase_A_M1 = 35;
 const int phase_B_m1 = 34;
@@ -34,23 +32,13 @@ const int IN4_M4 = 16;
 
 
 
-/////////////////////////// RECEPCIÓN WIFI //////////////////
-String inputString = "";
-bool stringComplete = false;
-const char separator = ',';
-const int dataLength = 3;
-int data[dataLength];
-int outValue = 0;
-
-int value1, value2, value3, out_value;
-
-WiFiServer server(80);
-
+BluetoothSerial SerialBT;  
 
 
 void setup()
 {
     Serial.begin(115200);
+    SerialBT.begin("ESP32test"); 
     pinMode(phase_A_M1, INPUT);
     pinMode(phase_B_m1, INPUT);
     pinMode(phase_A_M2, INPUT);
@@ -84,31 +72,11 @@ void setup()
     digitalWrite(IN2_M3, LOW);
     digitalWrite(IN3_M4, LOW);
     digitalWrite(IN4_M4, LOW);
-
     
-
-    WiFi.softAP(ssid, password);
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.softAPIP());
-    server.begin();
 }
 
 
 
-int get_data(String request){
-    for(int i= 0; i<dataLength; i++){
-        int pos = request.indexOf(separator);       
-        data[i] = request.substring(0, pos).toInt();
-        request = request.substring(pos+1);
-    }
-    value1 = data[0]; 
-    value2 = data[1];
-    value3 = data[2];
-    outValue = value1;
-    
-
-    return outValue;
-}
 
 void fordward(){
     //HABILITAR MOTORES
@@ -337,87 +305,42 @@ void stop(){
 }
 
 void loop(){
-    WiFiClient client = server.available();
-    if (client)
-    {
-        while (client.connected())
-        {
-
-            if (client.available())
-            {
-                
-                String request = client.readStringUntil('\n');
-                //if(request.length() > 0){
-                //    request = request.substring(request.length()-1);
-                //}
-                Serial.println(request);
-                out_value = get_data(request);
-                if(out_value == 1){
-                    // M1, M2, M3, M4 horario
-                    
-                    fordward();
-                    Serial.println("Ok");
-                    //client.stop();
-                    client.flush();
-                } 
-                else if(out_value == 2){
-                    // M1, M2, M3, M4 antihorario                    
-                    backward();
-                    //client.stop();
-                }
-                else if (out_value == 3){
-                    // M2, M4 horario, M1, M3 antihorario
-                    
-                    right();
-                    //client.stop();
-                }
-                else if (out_value == 4){
-                    // M2, M4 antihorario, M1, M3 horario
-                    left();
-                    //client.stop();
-                }
-                else if (out_value == 5){
-                    // M1, M4 horario, M2, M3 antihorario
-                    sup_right();
-                    //client.stop();
-                }
-                
-                else if (out_value == 6){
-                    // M1, M4 antihorario, M2, M3 horario
-                    sup_left();
-                    //client.stop();
-                }
-                else if (out_value == 7){
-                    // M2, M3 horario, M1, M4 antihorario
-                    inf_right();
-                    //client.stop();
-                }
-                else if (out_value == 8){
-                    // M2, M3 antihorario, M1, M4 horario
-                    inf_left();
-                    //client.stop();
-                }
-                else if (out_value == 9){
-                    // M1, M4 horaio, M2, M3 antihorario
-                    rotate_right();
-                    //client.stop();
-                }
-                else if (out_value == 10){
-                    // M1, M2, M3, M4 antihorario
-                    rotate_left();
-                    //client.stop();
-                }
-                
-                else {
-                    stop();
-                    
-                }
-                
-            }
-            
+    if (SerialBT.available()){
+        char dataBT = SerialBT.read();
+        if(dataBT == '1'){
+            fordward();
         }
-        client.stop();
-        Serial.println("Client Disconnected.");
+        else if(dataBT == '2'){
+            backward();
+        }
+        else if(dataBT == '3'){
+            right();
+        }
+        else if(dataBT == '4'){
+            left();
+        }
+        else if(dataBT == '5'){
+            sup_right();
+        }
+        else if(dataBT == '6'){
+            sup_left();
+        }
+        else if(dataBT == '7'){
+            inf_right();
+        }
+        else if(dataBT == '8'){
+            inf_left();
+        }
+        else if(dataBT == '9'){
+            rotate_right();
+        }
+        else if(dataBT == '0'){
+            rotate_left();
+        }
+        else if(dataBT == 's'){
+            stop();
+        }
     }
     
 }
+
