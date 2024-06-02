@@ -5,34 +5,33 @@
 const char *ssid = "ServerESP32";
 const char *password = "1234567890";
 //////// valores de los pines del motor 1 //////////
-const int phase_A_M1 = 19;
-const int phase_B_m1 = 20;
-const int ENA_M1 = 48;
-const int IN1_M1 = 21;
-const int IN2_M1 = 26;
+const int phase_A_M1 = 35;
+const int phase_B_m1 = 34;
+const int ENA_M1 = 5;
+const int IN1_M1 = 18;
+const int IN2_M1 = 19;
 
 //////// valores de los pines del motor 2 //////////
-const int phase_A_M2 = 7;
-const int phase_B_M2 = 6;
-const int ENB_M2 = 3;
-const int IN3_M2 = 5;
-const int IN4_M2 = 4;
+const int phase_A_M2 = 33;
+const int phase_B_M2 = 32;
+const int ENB_M2 = 23;
+const int IN3_M2 = 21;
+const int IN4_M2 = 22;
 
 //////// valores de los pines del motor 3 //////////
-const int phase_A_M3 = 2;
-const int phase_B_M3 = 1;
-const int ENA_M3 = 38;
-const int IN1_M3 = 39;
-const int IN2_M3 = 40;
+const int phase_A_M3 = 26;
+const int phase_B_M3 = 25;
+const int ENA_M3 = 15;
+const int IN1_M3 = 2;
+const int IN2_M3 = 0;
 
 //////// valores de los pines del motor 4 //////////
-const int phase_A_M4 = 41;
-const int phase_B_M4 = 42;
-const int ENB_M4 = 37;
-const int IN3_M4 = 45;
-const int IN4_M4 = 46;
+const int phase_A_M4 = 14;
+const int phase_B_M4 = 27;
+const int ENB_M4 = 17;
+const int IN3_M4 = 4;
+const int IN4_M4 = 16;
 
-const int pin_led = 35;
 
 
 /////////////////////////// RECEPCIÓN WIFI //////////////////
@@ -66,7 +65,7 @@ void setup()
     pinMode(ENA_M3, OUTPUT);
     pinMode(ENB_M4, OUTPUT);
 
-    pinMode(pin_led, OUTPUT);
+    
 
     pinMode(IN1_M1, OUTPUT);
     pinMode(IN2_M1, OUTPUT);
@@ -86,7 +85,7 @@ void setup()
     digitalWrite(IN3_M4, LOW);
     digitalWrite(IN4_M4, LOW);
 
-    digitalWrite(pin_led, LOW);
+    
 
     WiFi.softAP(ssid, password);
     Serial.print("IP Address: ");
@@ -355,21 +354,20 @@ void loop(){
                 out_value = get_data(request);
                 if(out_value == 1){
                     // M1, M2, M3, M4 horario
-                    digitalWrite(pin_led, HIGH);
+                    
                     fordward();
                     Serial.println("Ok");
                     //client.stop();
                     client.flush();
                 } 
                 else if(out_value == 2){
-                    // M1, M2, M3, M4 antihorario
-                    digitalWrite(pin_led, LOW);
+                    // M1, M2, M3, M4 antihorario                    
                     backward();
                     //client.stop();
                 }
                 else if (out_value == 3){
                     // M2, M4 horario, M1, M3 antihorario
-                    digitalWrite(pin_led, HIGH);
+                    
                     right();
                     //client.stop();
                 }
