@@ -4,7 +4,7 @@
 
 //////// valores de los pines del motor 1 //////////
 const int phase_A_M1 = 35;
-const int phase_B_m1 = 34;
+const int phase_B_M1 = 34;
 const int ENA_M1 = 5;
 const int IN1_M1 = 18;
 const int IN2_M1 = 19;
@@ -40,7 +40,7 @@ void setup()
     Serial.begin(115200);
     SerialBT.begin("ESP32test"); 
     pinMode(phase_A_M1, INPUT);
-    pinMode(phase_B_m1, INPUT);
+    pinMode(phase_B_M1, INPUT);
     pinMode(phase_A_M2, INPUT);
     pinMode(phase_B_M2, INPUT);
     pinMode(phase_A_M3, INPUT);
